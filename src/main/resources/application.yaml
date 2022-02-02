@@ -1,0 +1,8 @@
+# Configuration file
+quarkus:
+  mongodb:
+    connection-string : "mongodb://localhost:27017"
+    database: midgard
+    credentials:
+      username: domson
+      password: 3Mariacron!
