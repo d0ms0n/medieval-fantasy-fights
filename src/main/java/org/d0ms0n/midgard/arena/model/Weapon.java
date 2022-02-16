@@ -1,6 +1,7 @@
 package org.d0ms0n.midgard.arena.model;
 
 import org.d0ms0n.midgard.arena.game.Dice;
+import org.d0ms0n.midgard.arena.model.helper.WeaponType;
 
 public class Weapon extends Item {
     int diceCnt;
@@ -10,12 +11,24 @@ public class Weapon extends Item {
     int magicalAttackBonus;
     int magicalDamageBonus;
     int magicalDefenseBonus;
+    WeaponType weaponType;
+    boolean equipped;
 
-    public Weapon(int diceCnt, int diceType, int staticDamage, String name) {
+    public Weapon(int diceCnt, int diceType, int staticDamage, String name, WeaponType weaponType, boolean equipped) {
         this.diceCnt = diceCnt;
         this.diceType = diceType;
         this.staticDamage = staticDamage;
         this.name = name;
+        this.weaponType = weaponType;
+        this.equipped = equipped;
+    }
+
+    public WeaponType getWeaponType() {
+        return weaponType;
+    }
+
+    public void setWeaponType(WeaponType weaponType) {
+        this.weaponType = weaponType;
     }
 
     public int getMagicalAttackBonus() {
@@ -74,14 +87,21 @@ public class Weapon extends Item {
         return name;
     }
 
-    public int doDamage(int characterDamageBonus) {
+    public boolean isEquipped() {
+        return equipped;
+    }
+
+    public void setEquipped(boolean equipped) {
+        this.equipped = equipped;
+    }
+
+    public int doDamage() {
         int damage = 0;
         for (int i = 0; i < getDiceCnt(); i++) {
             damage += Dice.roll(getDiceType());
         }
         damage += getStaticDamage();
         damage += getMagicalDamageBonus();
-        damage += characterDamageBonus;
 
         return Math.max(damage, 0);
     }

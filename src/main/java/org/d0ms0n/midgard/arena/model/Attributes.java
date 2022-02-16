@@ -11,6 +11,18 @@ public class Attributes {
     int look;
     int willpower;
 
+    public Attributes(int strength, int dexterity, int agility, int constitution, int intelligence, int magicTalent, int charisma, int look, int willpower) {
+        this.strength = strength;
+        this.dexterity = dexterity;
+        this.agility = agility;
+        this.constitution = constitution;
+        this.intelligence = intelligence;
+        this.magicTalent = magicTalent;
+        this.charisma = charisma;
+        this.look = look;
+        this.willpower = willpower;
+    }
+
     public int getStrength() {
         return strength;
     }

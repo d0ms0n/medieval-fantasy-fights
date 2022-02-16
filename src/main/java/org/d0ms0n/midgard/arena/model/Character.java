@@ -1,12 +1,19 @@
 package org.d0ms0n.midgard.arena.model;
 
 import io.quarkus.mongodb.panache.MongoEntity;
+import org.d0ms0n.midgard.arena.model.helper.HeightType;
+import org.d0ms0n.midgard.arena.model.helper.SkillType;
+import org.d0ms0n.midgard.arena.model.helper.WeaponType;
+import org.d0ms0n.midgard.arena.model.helper.WidthType;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @MongoEntity(collection = "character")
-public class Character {
+public class Character implements Comparable<Character> {
     String name;
     int grade;
     int experience;
@@ -17,8 +24,8 @@ public class Character {
     String type;
     int heightInCm;
     int weightInKg;
-    String height;
-    String width;
+    HeightType heightType;
+    WidthType widthType;
     String standing;
     int age;
     String faith;
@@ -29,20 +36,59 @@ public class Character {
     int movement;
     int attackBonus;
     int defenseBonus;
+    int defense;
+    int resistanceMind;
+    int resistanceBody;
     int magicBonus;
+    long squadId;
     String handed;
     Characteristics characteristics;
     Attributes attributes;
     Bennies bennies;
     List<Skill> skills;
-    List<WeaponSkill> weaponSkills;
     List<Spell> spells;
+    String[] specialisations;
     List<Item> equipment;
     List<Container> container;
     List<Vehicle> meansOfTransportation;
 
+
+    public Character(String name, long squadId, int lifePoints, int lifePointsMax, int staminaPoints, int staminaPointsMax, int defense, Attributes attributes, String[] specialisations, List<Skill> skills, List<Item> equipment) {
+        this.name = name;
+        this.squadId = squadId;
+        this.lifePointsMax = lifePointsMax;
+        this.staminaPointsMax = staminaPointsMax;
+        this.lifePoints = lifePoints;
+        this.staminaPoints = staminaPoints;
+        this.defense = defense;
+        this.attributes = attributes;
+        this.equipment = equipment;
+        this.skills = skills;
+        this.specialisations = specialisations;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public int getResistanceMind() {
+        return resistanceMind;
+    }
+
+    public void setResistanceMind(int resistanceMind) {
+        this.resistanceMind = resistanceMind;
+    }
+
+    public int getResistanceBody() {
+        return resistanceBody;
+    }
+
+    public void setResistanceBody(int resistanceBody) {
+        this.resistanceBody = resistanceBody;
+    }
+
     public int getDamageBonus() {
-        return (int) (Math.ceil((double) this.attributes.getStrength() / 20.0) + Math.ceil((double) this.attributes.getDexterity() / 30.0) - 3);
+        return (int) (Math.floor((double) this.attributes.getStrength() / 20.0) + Math.floor((double) this.attributes.getDexterity() / 30.0) - 3);
     }
 
     public int getAttackBonus() {
@@ -58,13 +104,21 @@ public class Character {
 
     public int getDefenseBonus() {
         int agility = this.getAttributes().getAgility();
+        int bonus = 0;
         if (agility > 80) {
-            return agility > 95 ? 2 : 1;
+            bonus = agility > 95 ? 2 : 1;
         }
-        if (agility < 21){
-            return agility < 6 ? -2 : -1;
+        if (agility < 21) {
+            bonus = agility < 6 ? -2 : -1;
         }
-        return 0;
+
+        int lossOfDefenseBonusFromArmour = getEquipment().stream()
+                .filter(item -> item instanceof Armour && ((Armour) item).isPutOn())
+                .mapToInt(item -> ((Armour) item).getLossOfDefenseBonus())
+                .sum();
+
+
+        return bonus - lossOfDefenseBonusFromArmour;
     }
 
     public int getMagicBonus() {
@@ -72,10 +126,73 @@ public class Character {
         if (magicTalent > 80) {
             return magicTalent > 95 ? 2 : 1;
         }
-        if (magicTalent < 21){
+        if (magicTalent < 21) {
             return magicTalent < 6 ? -2 : -1;
         }
         return 0;
+    }
+
+    public int getArmourClass() {
+        return getEquipment().stream()
+                .filter(item -> item instanceof Armour && ((Armour) item).isPutOn())
+                .mapToInt(item -> ((Armour) item).getArmourClassBonus())
+                .sum();
+    }
+
+    private int getDefense() {
+        return defense;
+    }
+
+    public int getFullDefense() {
+        return getDefense() + getDefenseBonus();
+    }
+
+    public ParryingWeapon getParryingWeapon() {
+        return (ParryingWeapon) getEquipment().stream()
+                .filter(item -> item instanceof ParryingWeapon && ((ParryingWeapon) item).isEquipped())
+                .findFirst().orElse(null);
+    }
+
+    public int getAttackValue(Weapon weapon) {
+        int attackValue = getAttackBonus();
+
+        if (isSpecialisation(weapon)) {
+            attackValue += 2;
+        }
+
+        Optional<Skill> weaponSkill = getWeaponSkills().stream()
+                .filter(skill -> skill.getName().equals(weapon.getWeaponType().getName()))
+                .findFirst();
+
+        if (weaponSkill.isPresent()) {
+            attackValue += weaponSkill.get().getValue();
+        } else {
+            attackValue += 4;
+        }
+
+        return attackValue;
+    }
+
+    private boolean isSpecialisation(Weapon weapon) {
+        return Arrays.stream(this.specialisations).anyMatch(s -> s.equals(weapon.getName()));
+    }
+
+    public Weapon getAttackWeapon() {
+        return (Weapon) getEquipment().stream()
+                .filter(item -> item instanceof Weapon && ((Weapon) item).isEquipped())
+                .findFirst().orElse(getFist());
+    }
+
+    public long getSquadId() {
+        return squadId;
+    }
+
+    public Weapon getFist() {
+        return new Weapon(1, 6, -4, "Faust", WeaponType.UNSKILLED, true);
+    }
+
+    public void setSquadId(long squadId) {
+        this.squadId = squadId;
     }
 
     public String getName() {
@@ -158,20 +275,20 @@ public class Character {
         this.weightInKg = weightInKg;
     }
 
-    public String getHeight() {
-        return height;
+    public HeightType getHeightType() {
+        return heightType;
     }
 
-    public void setHeight(String height) {
-        this.height = height;
+    public void setHeightType(HeightType heightType) {
+        this.heightType = heightType;
     }
 
-    public String getWidth() {
-        return width;
+    public WidthType getWidthType() {
+        return widthType;
     }
 
-    public void setWidth(String width) {
-        this.width = width;
+    public void setWidthType(WidthType widthType) {
+        this.widthType = widthType;
     }
 
     public String getStanding() {
@@ -278,12 +395,8 @@ public class Character {
         this.skills = skills;
     }
 
-    public List<WeaponSkill> getWeaponSkills() {
-        return weaponSkills;
-    }
-
-    public void setWeaponSkills(List<WeaponSkill> weaponSkills) {
-        this.weaponSkills = weaponSkills;
+    public List<Skill> getWeaponSkills() {
+        return getSkills().stream().filter(skill -> skill.getType().equals(SkillType.WEAPON)).collect(Collectors.toList());
     }
 
     public List<Spell> getSpells() {
@@ -316,5 +429,10 @@ public class Character {
 
     public void setMeansOfTransportation(List<Vehicle> meansOfTransportation) {
         this.meansOfTransportation = meansOfTransportation;
+    }
+
+    @Override
+    public int compareTo(Character character) {
+        return character.getAttributes().getAgility() - getAttributes().getAgility();
     }
 }

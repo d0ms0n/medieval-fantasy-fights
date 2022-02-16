@@ -1,12 +1,23 @@
 package org.d0ms0n.midgard.arena.model;
 
+import org.bson.types.ObjectId;
+
 public class Item {
+    ObjectId id;
     boolean magical;
     String description;
     int weight;
     int value;
     int counterMax;
     int counter;
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
 
     public boolean isMagical() {
         return magical;

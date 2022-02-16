@@ -1,5 +1,7 @@
 package org.d0ms0n.midgard.arena.game;
 
+import org.d0ms0n.midgard.arena.model.Squad;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import java.util.List;
@@ -8,11 +10,11 @@ import java.util.List;
 public class Arena {
     private String name;
     private List<Squad> squads;
-    private Game game;
+    private Combat combat;
 
     @Inject
-    public Arena(Game game) {
-        this.game = game;
+    public Arena(Combat combat) {
+        this.combat = combat;
     }
 
     public String getName() {
@@ -31,11 +33,11 @@ public class Arena {
         this.squads = squads;
     }
 
-    public Game getGame() {
-        return game;
+    public Combat getGame() {
+        return combat;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGame(Combat combat) {
+        this.combat = combat;
     }
 }
