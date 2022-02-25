@@ -8,4 +8,4 @@ pluginManagement {
       id 'io.quarkus' version "${quarkusPluginVersion}"
     }
 }
-rootProject.name='midgard-arena'
+rootProject.name = 'medieval-fantasy-arena'
