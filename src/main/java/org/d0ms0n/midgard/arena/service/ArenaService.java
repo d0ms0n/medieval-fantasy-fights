@@ -42,13 +42,25 @@ public class ArenaService {
                 new Character("Adventurer", adventurer.getSquadId(),
                         18, 18,
                         18, 18,
-                        11, attributes, new String[]{},
+                        11, attributes, new ArrayList<>(),
                         Arrays.asList(
                                 new Skill(WeaponType.ONE_HANDED_SWORD.getName(), SkillType.WEAPON, 10),
                                 new Skill(WeaponType.PARRYING_WEAPON.getName(), SkillType.WEAPON, 2)),
                         Arrays.asList(
-                                new Weapon(1, 6, 1, "Langschwert", WeaponType.ONE_HANDED_SWORD, true),
-                                new ParryingWeapon(1, 6, -1, "Parierdolch", 2, WeaponType.PARRYING_WEAPON, true),
+                                new Weapon(
+                                        "Langschwert",
+                                        "Langschwert",
+                                        0,
+                                        0,
+                                        new RawWeapon(1, 6, 1, "Langscchwert", WeaponType.ONE_HANDED_SWORD),
+                                        true),
+                                new ParryingWeapon("Parierdolch",
+                                        "",
+                                        0,
+                                        0,
+                                        0,
+                                        new RawWeapon(1, 6, -1, "Parierdolch", WeaponType.SHIELD),
+                                        true),
                                 new Armour(true, ArmourType.CHAIN)
                         ))
         ));
@@ -57,13 +69,25 @@ public class ArenaService {
                         new Character("Orc", foes.getSquadId(),
                                 14, 14,
                                 18, 18,
-                                11, attributes, new String[]{},
+                                11, attributes, new ArrayList<>(),
                                 Arrays.asList(
                                         new Skill(WeaponType.ONE_HANDED_STRIKING_WEAPON.getName(), SkillType.WEAPON, 8),
                                         new Skill(WeaponType.SHIELD.getName(), SkillType.WEAPON, 2)),
                                 Arrays.asList(
-                                        new Weapon(1, 6, 1, "Streitaxt", WeaponType.ONE_HANDED_STRIKING_WEAPON, true),
-                                        new ParryingWeapon(0, 0, 0, "Kleiner Schild", 1, WeaponType.SHIELD, true),
+                                        new Weapon("Streitaxt",
+                                                "Streitaxt",
+                                                0,
+                                                0,
+                                                new RawWeapon(1, 6, 1, "Streitaxt", WeaponType.ONE_HANDED_STRIKING_WEAPON),
+                                                true),
+                                        new ParryingWeapon(
+                                                "Kleiner Schild",
+                                                "",
+                                                0,
+                                                0,
+                                                0,
+                                                new RawWeapon(0, 0, 0, "Schild:klein", WeaponType.SHIELD),
+                                                true),
                                         new Armour(true, ArmourType.LEATHER)
                                 ))
                 )

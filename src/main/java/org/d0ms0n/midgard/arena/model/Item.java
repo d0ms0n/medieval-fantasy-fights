@@ -4,12 +4,23 @@ import org.bson.types.ObjectId;
 
 public class Item {
     ObjectId id;
+    String name;
     boolean magical;
     String description;
-    int weight;
-    int value;
+    float weight;
+    float value;
     int counterMax;
     int counter;
+
+    public Item(String name, String description, float weight, float value) {
+        this.name = name;
+        this.description = description;
+        this.weight = weight;
+        this.value = value;
+    }
+
+    public Item() {
+    }
 
     public ObjectId getId() {
         return id;
@@ -17,6 +28,14 @@ public class Item {
 
     public void setId(ObjectId id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isMagical() {
@@ -35,19 +54,19 @@ public class Item {
         this.description = description;
     }
 
-    public int getWeight() {
+    public float getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(float weight) {
         this.weight = weight;
     }
 
-    public int getValue() {
+    public float getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(float value) {
         this.value = value;
     }
 

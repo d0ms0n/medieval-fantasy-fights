@@ -10,11 +10,11 @@ import java.util.List;
 public class Arena {
     private String name;
     private List<Squad> squads;
-    private Combat combat;
+    private CombatEngine combatEngine;
 
     @Inject
-    public Arena(Combat combat) {
-        this.combat = combat;
+    public Arena(CombatEngine combatEngine) {
+        this.combatEngine = combatEngine;
     }
 
     public String getName() {
@@ -33,11 +33,11 @@ public class Arena {
         this.squads = squads;
     }
 
-    public Combat getGame() {
-        return combat;
+    public CombatEngine getGame() {
+        return combatEngine;
     }
 
-    public void setGame(Combat combat) {
-        this.combat = combat;
+    public void setGame(CombatEngine combatEngine) {
+        this.combatEngine = combatEngine;
     }
 }

@@ -1,13 +1,11 @@
 package org.d0ms0n.midgard.arena.model;
 
-import org.d0ms0n.midgard.arena.model.helper.WeaponType;
-
 public class ParryingWeapon extends Weapon {
 
     private final int staminaPointsPreserving;
 
-    public ParryingWeapon(int diceCnt, int diceType, int staticDamage, String name, int staminaPointsPreserving, WeaponType weaponType, boolean equipped) {
-        super(diceCnt, diceType, staticDamage, name, weaponType, equipped);
+    public ParryingWeapon(String name, String description, int staminaPointsPreserving, double weight, double value, RawWeapon rawWeapon, boolean equipped) {
+        super(name, description, weight, value, rawWeapon, equipped);
         this.staminaPointsPreserving = staminaPointsPreserving;
     }
 

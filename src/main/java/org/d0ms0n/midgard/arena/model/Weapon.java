@@ -1,34 +1,21 @@
 package org.d0ms0n.midgard.arena.model;
 
 import org.d0ms0n.midgard.arena.game.Dice;
-import org.d0ms0n.midgard.arena.model.helper.WeaponType;
 
 public class Weapon extends Item {
-    int diceCnt;
-    int diceType;
-    int staticDamage;
-    String name;
     int magicalAttackBonus;
     int magicalDamageBonus;
     int magicalDefenseBonus;
-    WeaponType weaponType;
+    RawWeapon rawWeapon;
     boolean equipped;
 
-    public Weapon(int diceCnt, int diceType, int staticDamage, String name, WeaponType weaponType, boolean equipped) {
-        this.diceCnt = diceCnt;
-        this.diceType = diceType;
-        this.staticDamage = staticDamage;
-        this.name = name;
-        this.weaponType = weaponType;
+    public Weapon(String name, String description, float weight, float value, RawWeapon rawWeapon, boolean equipped) {
+        super(name, description, weight, value);
         this.equipped = equipped;
+        this.rawWeapon = rawWeapon;
     }
 
-    public WeaponType getWeaponType() {
-        return weaponType;
-    }
-
-    public void setWeaponType(WeaponType weaponType) {
-        this.weaponType = weaponType;
+    public Weapon() {
     }
 
     public int getMagicalAttackBonus() {
@@ -55,38 +42,6 @@ public class Weapon extends Item {
         this.magicalDefenseBonus = magicalDefenseBonus;
     }
 
-    public void setDiceCnt(int diceCnt) {
-        this.diceCnt = diceCnt;
-    }
-
-    public void setDiceType(int diceType) {
-        this.diceType = diceType;
-    }
-
-    public void setStaticDamage(int staticDamage) {
-        this.staticDamage = staticDamage;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getDiceCnt() {
-        return diceCnt;
-    }
-
-    public int getDiceType() {
-        return diceType;
-    }
-
-    public int getStaticDamage() {
-        return staticDamage;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public boolean isEquipped() {
         return equipped;
     }
@@ -95,12 +50,20 @@ public class Weapon extends Item {
         this.equipped = equipped;
     }
 
+    public RawWeapon getRawWeapon() {
+        return rawWeapon;
+    }
+
+    public void setRawWeapon(RawWeapon rawWeapon) {
+        this.rawWeapon = rawWeapon;
+    }
+
     public int doDamage() {
         int damage = 0;
-        for (int i = 0; i < getDiceCnt(); i++) {
-            damage += Dice.roll(getDiceType());
+        for (int i = 0; i < getRawWeapon().getDiceCnt(); i++) {
+            damage += Dice.roll(getRawWeapon().getDiceType());
         }
-        damage += getStaticDamage();
+        damage += getRawWeapon().getStaticDamage();
         damage += getMagicalDamageBonus();
 
         return Math.max(damage, 0);

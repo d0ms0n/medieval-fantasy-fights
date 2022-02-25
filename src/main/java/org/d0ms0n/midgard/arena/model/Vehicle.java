@@ -4,6 +4,10 @@ public class Vehicle extends Container {
     int kmPerHour;
     int meterPerRound;
 
+    public Vehicle(String name, String description, int weight, int value) {
+        super(name, description, weight, value);
+    }
+
     public int getKmPerHour() {
         return kmPerHour;
     }

@@ -1,5 +1,7 @@
 package org.d0ms0n.midgard.arena.model.helper;
 
+import java.util.Arrays;
+
 public enum Race {
     GNOME("Gnom", "<= 60", " >= 81", ">= 81", ">= 51", "<= 100", "<= 100", "<= 80", -3, 4),
     HALFLING("Halbling", "<= 80", ">= 61", ">= 91", ">= 41", "<= 100", "<= 100", "<= 100", -2, 4),
@@ -29,6 +31,53 @@ public enum Race {
         this.look = look;
         this.lifePoints = lifePoints;
         this.resistence = resistence;
+    }
+
+    public static Race getRaceFromName(String name) {
+        return Arrays.stream(Race.values())
+                .filter(race -> race.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(HUMAN);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getStrength() {
+        return strength;
+    }
+
+    public String getDexterity() {
+        return dexterity;
+    }
+
+    public String getAgility() {
+        return agility;
+    }
+
+    public String getConstitution() {
+        return constitution;
+    }
+
+    public String getIntelligence() {
+        return intelligence;
+    }
+
+    public String getMagicTalent() {
+        return magicTalent;
+    }
+
+    public String getLook() {
+        return look;
+    }
+
+    public int getLifePoints() {
+        return lifePoints;
+    }
+
+    public int getResistence() {
+        return resistence;
     }
 
     @Override

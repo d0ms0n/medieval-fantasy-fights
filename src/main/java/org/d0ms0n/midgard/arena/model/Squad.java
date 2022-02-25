@@ -13,6 +13,7 @@ public class Squad {
         this.name = name;
         this.members = members;
         this.squadId = secureRandom.nextLong();
+        members.stream().forEach(character -> character.setSquadId(squadId));
     }
 
     public long getSquadId() {

@@ -12,6 +12,10 @@ public class Container extends Item {
     int loadCapacityMax;
     List<Item> content;
 
+    public Container(String name, String description, int weight, int value) {
+        super(name, description, weight, value);
+    }
+
     public int getLoadCapacityMax() {
         return loadCapacityMax;
     }
@@ -36,8 +40,8 @@ public class Container extends Item {
         this.volumeInLiter = volumeInLiter;
     }
 
-    public int getLoadCapacity() {
-        return content.stream().mapToInt(Item::getWeight).sum();
+    public double getLoadCapacity() {
+        return content.stream().mapToDouble(Item::getWeight).sum();
     }
 
     public void setLoadCapacity(int loadCapacity) {

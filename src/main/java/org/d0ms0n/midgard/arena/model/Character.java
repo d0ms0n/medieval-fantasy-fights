@@ -1,13 +1,10 @@
 package org.d0ms0n.midgard.arena.model;
 
 import io.quarkus.mongodb.panache.MongoEntity;
-import org.d0ms0n.midgard.arena.model.helper.HeightType;
-import org.d0ms0n.midgard.arena.model.helper.SkillType;
-import org.d0ms0n.midgard.arena.model.helper.WeaponType;
-import org.d0ms0n.midgard.arena.model.helper.WidthType;
+import org.d0ms0n.midgard.arena.model.helper.*;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,17 +12,15 @@ import java.util.stream.Collectors;
 @MongoEntity(collection = "character")
 public class Character implements Comparable<Character> {
     String name;
-    int grade;
+    int level;
     int experience;
     int experiencePoints;
     Array specialization;
     String gender;
-    String race;
-    String type;
+    Race race;
+    Profession profession;
     int heightInCm;
     int weightInKg;
-    HeightType heightType;
-    WidthType widthType;
     String standing;
     int age;
     String faith;
@@ -36,7 +31,6 @@ public class Character implements Comparable<Character> {
     int movement;
     int attackBonus;
     int defenseBonus;
-    int defense;
     int resistanceMind;
     int resistanceBody;
     int magicBonus;
@@ -47,44 +41,65 @@ public class Character implements Comparable<Character> {
     Bennies bennies;
     List<Skill> skills;
     List<Spell> spells;
-    String[] specialisations;
+    List<String> specialisations;
     List<Item> equipment;
     List<Container> container;
     List<Vehicle> meansOfTransportation;
 
 
-    public Character(String name, long squadId, int lifePoints, int lifePointsMax, int staminaPoints, int staminaPointsMax, int defense, Attributes attributes, String[] specialisations, List<Skill> skills, List<Item> equipment) {
+    public Character(String name, long squadId, int lifePoints, int lifePointsMax, int staminaPoints, int staminaPointsMax, int level, Attributes attributes, List<String> specialisations, List<Skill> skills, List<Item> equipment) {
         this.name = name;
         this.squadId = squadId;
         this.lifePointsMax = lifePointsMax;
         this.staminaPointsMax = staminaPointsMax;
         this.lifePoints = lifePoints;
         this.staminaPoints = staminaPoints;
-        this.defense = defense;
+        this.level = level;
         this.attributes = attributes;
         this.equipment = equipment;
         this.skills = skills;
         this.specialisations = specialisations;
     }
 
-    public void setDefense(int defense) {
-        this.defense = defense;
+    public Character(CharacterBuilder characterBuilder) {
+        this.name = characterBuilder.getName();
+        this.race = characterBuilder.getRace();
+        this.profession = characterBuilder.getProfession();
+        this.squadId = characterBuilder.getSquadId();
+        this.lifePointsMax = characterBuilder.getLifePointsMax();
+        this.staminaPointsMax = characterBuilder.getStaminaPointsMax();
+        this.lifePoints = characterBuilder.getLifePoints();
+        this.staminaPoints = characterBuilder.getStaminaPoints();
+        this.attributes = characterBuilder.getAttributes();
+        this.specialisations = characterBuilder.getSpecialisations();
+        this.level = characterBuilder.getLevel();
+        this.equipment = characterBuilder.getEquipment();
+        this.skills = characterBuilder.getSkills();
+        this.specialisations = characterBuilder.getSpecialisations();
+        this.movement = characterBuilder.getMovement();
+        this.age = characterBuilder.getAge();
+        this.characteristics = characterBuilder.getCharacteristics();
+        this.bennies = characterBuilder.getBennies();
+        this.experience = characterBuilder.getExperience();
+        this.faith = characterBuilder.getFaith();
+        this.heightInCm = characterBuilder.getHeightInCm();
+        this.weightInKg = characterBuilder.getWeightInKg();
     }
 
     public int getResistanceMind() {
-        return resistanceMind;
+        return calcDefenseAndResistanceFromLevel();
     }
 
-    public void setResistanceMind(int resistanceMind) {
-        this.resistanceMind = resistanceMind;
+    public int getFullResistanceMind() {
+        return getResistanceMind() + 0;
+    }
+
+    public int getFullResistanceBody() {
+        return getResistanceBody() + 0;
     }
 
     public int getResistanceBody() {
-        return resistanceBody;
-    }
-
-    public void setResistanceBody(int resistanceBody) {
-        this.resistanceBody = resistanceBody;
+        return calcDefenseAndResistanceFromLevel();
     }
 
     public int getDamageBonus() {
@@ -139,8 +154,36 @@ public class Character implements Comparable<Character> {
                 .sum();
     }
 
-    private int getDefense() {
-        return defense;
+    public int getDefense() {
+        return calcDefenseAndResistanceFromLevel();
+    }
+
+    private int calcDefenseAndResistanceFromLevel() {
+        if (level == 1) {
+            return 11;
+        }
+        if (level == 2) {
+            return 12;
+        }
+        if (level >= 3 && level < 5) {
+            return 13;
+        }
+        if (level >= 5 && level < 10) {
+            return 14;
+        }
+        if (level >= 10 && level < 15) {
+            return 15;
+        }
+        if (level >= 15 && level < 20) {
+            return 15;
+        }
+        if (level >= 20 && level < 25) {
+            return 15;
+        }
+        if (level >= 25 && level < 30) {
+            return 15;
+        }
+        return 11;
     }
 
     public int getFullDefense() {
@@ -161,7 +204,7 @@ public class Character implements Comparable<Character> {
         }
 
         Optional<Skill> weaponSkill = getWeaponSkills().stream()
-                .filter(skill -> skill.getName().equals(weapon.getWeaponType().getName()))
+                .filter(skill -> skill.getName().equals(weapon.getRawWeapon().getWeaponType().getName()))
                 .findFirst();
 
         if (weaponSkill.isPresent()) {
@@ -174,7 +217,7 @@ public class Character implements Comparable<Character> {
     }
 
     private boolean isSpecialisation(Weapon weapon) {
-        return Arrays.stream(this.specialisations).anyMatch(s -> s.equals(weapon.getName()));
+        return this.specialisations.stream().anyMatch(s -> s.equals(weapon.getName()));
     }
 
     public Weapon getAttackWeapon() {
@@ -188,7 +231,7 @@ public class Character implements Comparable<Character> {
     }
 
     public Weapon getFist() {
-        return new Weapon(1, 6, -4, "Faust", WeaponType.UNSKILLED, true);
+        return new Weapon("Faust", "Faust", 0.0F, 0.0F, new RawWeapon(1, 6, -4, "Faust", WeaponType.UNSKILLED), true);
     }
 
     public void setSquadId(long squadId) {
@@ -203,12 +246,12 @@ public class Character implements Comparable<Character> {
         this.name = name;
     }
 
-    public int getGrade() {
-        return grade;
+    public int getLevel() {
+        return level;
     }
 
-    public void setGrade(int grade) {
-        this.grade = grade;
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public int getExperience() {
@@ -243,20 +286,20 @@ public class Character implements Comparable<Character> {
         this.gender = gender;
     }
 
-    public String getRace() {
+    public Race getRace() {
         return race;
     }
 
-    public void setRace(String race) {
+    public void setRace(Race race) {
         this.race = race;
     }
 
-    public String getType() {
-        return type;
+    public Profession getProfession() {
+        return profession;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setProfession(Profession profession) {
+        this.profession = profession;
     }
 
     public int getHeightInCm() {
@@ -276,19 +319,11 @@ public class Character implements Comparable<Character> {
     }
 
     public HeightType getHeightType() {
-        return heightType;
-    }
-
-    public void setHeightType(HeightType heightType) {
-        this.heightType = heightType;
+        return HeightType.getHeightTypeFromSeize(this.race, this.heightInCm);
     }
 
     public WidthType getWidthType() {
-        return widthType;
-    }
-
-    public void setWidthType(WidthType widthType) {
-        this.widthType = widthType;
+        return WidthType.getWidthTypeFromSizeAndWeight(this.race, this.heightInCm, this.weightInKg);
     }
 
     public String getStanding() {
@@ -372,6 +407,9 @@ public class Character implements Comparable<Character> {
     }
 
     public Attributes getAttributes() {
+        if (attributes == null) {
+            attributes = new Attributes(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        }
         return attributes;
     }
 
@@ -388,6 +426,9 @@ public class Character implements Comparable<Character> {
     }
 
     public List<Skill> getSkills() {
+        if (skills == null) {
+            skills = new ArrayList<>();
+        }
         return skills;
     }
 
@@ -408,6 +449,9 @@ public class Character implements Comparable<Character> {
     }
 
     public List<Item> getEquipment() {
+        if (equipment == null) {
+            equipment = new ArrayList<>();
+        }
         return equipment;
     }
 
@@ -416,6 +460,9 @@ public class Character implements Comparable<Character> {
     }
 
     public List<Container> getContainer() {
+        if (container == null) {
+            container = new ArrayList<>();
+        }
         return container;
     }
 
@@ -424,6 +471,9 @@ public class Character implements Comparable<Character> {
     }
 
     public List<Vehicle> getMeansOfTransportation() {
+        if (meansOfTransportation == null) {
+            meansOfTransportation = new ArrayList<>();
+        }
         return meansOfTransportation;
     }
 

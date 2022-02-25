@@ -7,4 +7,8 @@ import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class RawSkillRepository implements PanacheMongoRepository<RawSkill> {
+
+    public RawSkill findByName(String name) {
+        return find("name", name).firstResult();
+    }
 }
