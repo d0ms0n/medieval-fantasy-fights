@@ -9,7 +9,8 @@
 	import Dialog, { Title, Content, Actions } from '@smui/dialog';
 	import { onMount } from 'svelte';
   import type { Skill } from '../services/skillService'; 
-  import * as SkillService from '../services/skillService'; 
+  import * as SkillService from '../services/skillService';
+  import {userInfo, accessToken} from '@dopry/svelte-oidc';
 
   let sort: keyof Skill = 'name';
   let sortDirection = 'ascending';
@@ -19,11 +20,17 @@
   let skillInput: Skill = {name: "", leadingAttribute: "", source: "", unskilled: 0, type: ""};
   let leadingAttributes: string[] = ["strength", "dexterity", "agility", "constitution", "intelligence", "magicTalent", "charisma", "look", "willpower"];
 
+  export let token
+
 	onMount(async () => {
-    skills = await SkillService.loadSkills();
-    skillTypes = await SkillService.loadSkillTypes();
+    SkillService.loadSkillTypes().then(data => skillTypes = data)
 	});
 
+  $: if ($accessToken && 'sub' in $userInfo) {
+      token = $accessToken
+      SkillService.loadSkills(token).then(data => skills = data)
+  }
+  
   function handleSort() {
     skills.sort((a, b) => {
       const [aVal, bVal] = [a[sort], b[sort]][
@@ -40,26 +47,26 @@
   function addOrUpdateSkill() {
     if(skillInput.id == null) {
       console.log("add "+JSON.stringify(skillInput));
-      SkillService.addSkill(skillInput)
+      SkillService.addSkill(skillInput, token)
         .then((response) => {
           if (response.status == 201) {
-            SkillService.loadSkills().then(data => (skills = data));
+            SkillService.loadSkills(token).then(data => (skills = data));
           }
         })
         .catch((error) => {
             console.log(error);
-            SkillService.loadSkills().then(data => (skills = data));
+            SkillService.loadSkills(token).then(data => (skills = data));
         });
     } else {
-      SkillService.updateSkill(skillInput)
+      SkillService.updateSkill(skillInput, token)
       .then(response => {
         if(response.status == 204){
-          SkillService.loadSkills().then(data => (skills = data));
+          SkillService.loadSkills(token).then(data => (skills = data));
         }
       })
       .catch(error => {
           console.log(error);
-          SkillService.loadSkills().then(data => (skills = data));
+          SkillService.loadSkills(token).then(data => (skills = data));
       })
       console.log("update "+JSON.stringify(skillInput));
     }
@@ -124,8 +131,8 @@
               </Icon>
             </IconButton> -->
             <div on:click={() => {
-                SkillService.deleteSkill(skill)
-                .then(() => {SkillService.loadSkills()
+                SkillService.deleteSkill(skill, token)
+                .then(() => {SkillService.loadSkills(token)
                   .then(data => (skills = data))})}
               }>Delete</div>
           <!-- </div> -->

@@ -4,15 +4,16 @@ db.createUser({
     roles: [
         {
             role: 'readWrite',
-            db: 'midgard-arena',
+            db: 'mff',
         },
     ],
 });
 
-db.createCollection('skill', { capped: false });
-db.createCollection('weapon', { capped: false });
+db.createCollection('skills', { capped: false });
+db.createCollection('weapons', { capped: false });
+db.createCollection('characters', { capped: false });
 
-db.skill.insertMany(
+db.skills.insertMany(
 [{
   "_id": new ObjectId(),
   "leadingAttribute": "pA",
@@ -65,8 +66,9 @@ db.weapon.insertMany(
     }
   },
   "requirements": {
-    "strength": "31",
-    "dexterity": "31"
+    "strength": "6",
+    "dexterity": "6"
   },
   "value": "25"
-}]);
+}
+]);

@@ -70,10 +70,16 @@ export default {
 			dirs: ['public'],
 			spa: 'public/index.html', 
 			port: 3000, 
-			proxy: [{ 
-				from: '/api',
-				to: 'http://localhost:8082'
-			}],
+			proxy: [
+				{ 
+					from: '/api',
+					to: 'http://localhost:8082'
+				},
+				{ 
+					from: '/auth',
+					to: 'http://localhost:8081'
+				}
+			],
 	}),
 
 		// In dev mode, call `npm run start` once

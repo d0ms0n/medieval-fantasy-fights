@@ -1,11 +1,11 @@
 export type Weapon = {
     id?: string;
-    weaponName: string;
+    name: string;
     description?: string;
-    weaponType: string;
+    type: string;
     weight?: number;
     value?: number;
-    diceCnt?: number;
+    diceCount?: number;
     diceType?: number;
     staticDamage?: number;
 };

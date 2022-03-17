@@ -33,3 +33,4 @@ nb-configuration.xml
 build/
 data/
 /gradle/
+/arena-frontend/auth_config.js

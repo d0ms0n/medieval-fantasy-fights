@@ -10,18 +10,24 @@
 	import { onMount } from 'svelte';
   import type { Weapon } from '../services/weaponService'; 
   import * as WeaponService from '../services/weaponService'; 
+  import {userInfo, accessToken} from '@dopry/svelte-oidc';
 
-  let sort: keyof Weapon = 'weaponName';
+  let sort: keyof Weapon = 'name';
   let sortDirection = 'ascending';
   let weapons: Weapon[] = [];
   let weaponTypes = [];
   let open = false;
-  let weaponInput: Weapon = {weaponName: "", weaponType: "", diceCnt: 1, diceType: 6, staticDamage: +1};
+  let weaponInput: Weapon = {name: "", type: "", diceCount: 1, diceType: 6, staticDamage: +1};
+  let token
 
 	onMount(async () => {
-    weapons = await WeaponService.loadWeapons();
     weaponTypes = await WeaponService.loadWeaponTypes();
 	});
+
+  $: if ($accessToken && 'sub' in $userInfo) {
+      token = $accessToken
+      WeaponService.loadWeapons(token).then(data => weapons = data)
+  }
 
   function handleSort() {
     weapons.sort((a, b) => {
@@ -39,47 +45,47 @@
   function addOrUpdateWeapon() {
     if(weaponInput.id == null) {
       console.log("add "+JSON.stringify(weaponInput));
-      WeaponService.addWeapon(weaponInput)
+      WeaponService.addWeapon(weaponInput, token)
         .then((response) => {
           if (response.status == 201) {
-            WeaponService.loadWeapons().then(data => (weapons = data));
+            WeaponService.loadWeapons(token).then(data => (weapons = data));
           }
         })
         .catch((error) => {
             console.log(error);
-            WeaponService.loadWeapons().then(data => (weapons = data));
+            WeaponService.loadWeapons(token).then(data => (weapons = data));
         });
     } else {
-      WeaponService.updateWeapon(weaponInput)
+      WeaponService.updateWeapon(weaponInput, token)
       .then(response => {
         if(response.status == 204){
-          WeaponService.loadWeapons().then(data => (weapons = data));
+          WeaponService.loadWeapons(token).then(data => (weapons = data));
         }
       })
       .catch(error => {
           console.log(error);
-          WeaponService.loadWeapons().then(data => (weapons = data));
+          WeaponService.loadWeapons(token).then(data => (weapons = data));
       })
       console.log("update "+JSON.stringify(weaponInput));
     }
   }
 </script>
 
-<h2>Skills verwalten</h2>
+<h2>Waffen verwalten</h2>
 
 <DataTable sortable
              bind:sort
              bind:sortDirection
              on:SMUIDataTable:sorted={handleSort}
-             table$aria-label="Skill list"
+             table$aria-label="Weapon list"
              style="width: 100%;">
   <Head>
     <Row>
-      <Cell columnId="weaponName">
+      <Cell columnId="name">
         <IconButton class="material-icons">arrow_upward</IconButton>
         <Label>Name</Label>
       </Cell>
-      <Cell columnId="weaponType">
+      <Cell columnId="type">
         <IconButton class="material-icons">arrow_upward</IconButton>
         <Label>Type</Label>
       </Cell>
@@ -92,9 +98,9 @@
   <Body>
   {#each weapons as weapon }
     <Row id={weapon.id}>
-          <Cell>{weapon.weaponName}</Cell>
-          <Cell>{weapon.weaponType}</Cell>
-          <Cell>{weapon.diceCnt == 0 ? "" : weapon.diceCnt + "W" + weapon.diceType} {
+          <Cell>{weapon.name}</Cell>
+          <Cell>{weapon.type}</Cell>
+          <Cell>{weapon.diceCount == 0 ? "" : weapon.diceCount + "W" + weapon.diceType} {
             weapon.staticDamage > 0 ? "+ " + weapon.staticDamage : (weapon.staticDamage < 0 ? "- " + weapon.staticDamage * -1 : "")
           }</Cell>
           <Cell>
@@ -115,15 +121,15 @@
               </Icon>
             </IconButton> -->
             <div on:click={() => {
-                WeaponService.deleteWeapon(weapon)
-                .then(() => {WeaponService.loadWeapons()
+                WeaponService.deleteWeapon(weapon, token)
+                .then(() => {WeaponService.loadWeapons(token)
                   .then(data => (weapons = data))})}
               }>Delete</div>
           <!-- </div> -->
           </Cell>
     </Row>
   {/each}
-  <Button on:click={() => {open = true; weaponInput = {weaponName: "", weaponType: "", diceCnt: 1, diceType: 6, staticDamage: +0}}} variant="raised">
+  <Button on:click={() => {open = true; weaponInput = {name: "", type: "", diceCount: 1, diceType: 6, staticDamage: +0}}} variant="raised">
     <Label>Add weapon</Label>
   </Button>
 
@@ -141,17 +147,17 @@
   <Content id="mandatory-content">
     <Textfield id="weapon-name" style="width: 100%;" required 
     helperLine$style="width: 100%;"
-    bind:value={weaponInput.weaponName}
+    bind:value={weaponInput.name}
     label="Name"></Textfield>
-    <Select id="weapon-weaponType" label="Type" style="width: 100%;" required bind:value={weaponInput.weaponType}>
-      <Option value={weaponInput.weaponType} />
+    <Select id="weapon-weaponType" label="Type" style="width: 100%;" required bind:value={weaponInput.type}>
+      <Option value={weaponInput.type} />
       {#each weaponTypes as weaponType}
         <Option value={weaponType}>{weaponType}</Option>
       {/each}
     </Select>
     <Textfield id="weapon-diceCnt" style="width: 100%;" required 
     helperLine$style="width: 100%;"
-    bind:value={weaponInput.diceCnt}
+    bind:value={weaponInput.diceCount}
     label="Anzahl Würfel">1</Textfield>
     <Textfield id="weapon-diceType" style="width: 100%;" required 
     helperLine$style="width: 100%;"

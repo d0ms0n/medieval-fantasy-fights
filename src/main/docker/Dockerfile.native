@@ -7,11 +7,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t quarkus/midgard-arena .
+# docker build -f src/main/docker/Dockerfile.native -t quarkus/medieval-fantasy-fights .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/midgard-arena
+# docker run -i --rm -p 8080:8080 quarkus/medieval-fantasy-fights
 #
 ###
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.1

@@ -1,7 +1,7 @@
 # Configuration file
 quarkus:
   application:
-    name: midgard-arena
+    name: medieval-fantasy-fights
     version: 0.0.1
   http:
     port: 8082
@@ -11,13 +11,20 @@ quarkus:
       - META-INF/resources/build/bundle.js.map
       - META-INF/resources/global.css
       - META-INF/resources/index.html
+  oidc:
+    auth-server-url: https://localhost:8443/realms/mfa
+    client-id: arena
+    #    credentials:
+    #      secret: secret
+    tls:
+      verification: none
   log:
     file:
       enable: true
       path: src/test.log
   mongodb:
     connection-string: "mongodb://localhost:27017"
-    database: midgard
+    database: mff
     credentials:
       username: admin
       password: admin

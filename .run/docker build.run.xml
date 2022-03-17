@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="docker build" type="ShConfigurationType">
         <option name="SCRIPT_TEXT"
-                value="docker build -f src/main/docker/Dockerfile.jvm -t quarkus/midgard-arena-jvm:0.0.1 ."/>
+                value="docker build -f src/main/docker/Dockerfile.jvm -t quarkus/medieval-fantasy-fights-jvm:0.0.1 ."/>
         <option name="INDEPENDENT_SCRIPT_PATH" value="true"/>
         <option name="SCRIPT_PATH" value=""/>
         <option name="SCRIPT_OPTIONS" value=""/>

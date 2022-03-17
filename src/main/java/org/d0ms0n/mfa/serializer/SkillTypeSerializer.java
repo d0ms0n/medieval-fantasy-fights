@@ -3,7 +3,7 @@ package org.d0ms0n.mfa.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.d0ms0n.mfa.arena.model.helper.SkillType;
+import org.d0ms0n.mfa.model.helper.SkillType;
 
 import java.io.IOException;
 

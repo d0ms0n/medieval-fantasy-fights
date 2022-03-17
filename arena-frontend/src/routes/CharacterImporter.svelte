@@ -15,8 +15,7 @@
     const formData = new FormData();
     formData.append('file', files.accepted[0]);
     formData.append('file', files.accepted[1]);
-    // formData.append('fileName', files.accepted[0].name );
-    const upload = fetch('api/characters/import', {
+    fetch('api/characters/import', {
         method: 'POST',
         body: formData
     }).then((response) => response.json()).then((result) => {
