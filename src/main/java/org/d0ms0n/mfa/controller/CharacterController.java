@@ -1,6 +1,5 @@
 package org.d0ms0n.mfa.controller;
 
-import io.quarkus.security.identity.SecurityIdentity;
 import org.d0ms0n.mfa.model.Character;
 import org.d0ms0n.mfa.model.dto.Character1Dto;
 import org.d0ms0n.mfa.model.helper.Profession;
@@ -19,17 +18,12 @@ import java.util.List;
 @Path("/characters")
 public class CharacterController {
 
-
     @Inject
     CharacterService characterService;
 
     @Inject
-    SecurityIdentity identity;
-
-    @Inject
     @Claim(standard = Claims.sub)
     String userId;
-
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

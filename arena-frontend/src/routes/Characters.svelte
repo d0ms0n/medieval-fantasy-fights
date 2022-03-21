@@ -1,20 +1,16 @@
 <script lang="ts">
-  // import DataTable,{ Body,Cell,Head,Label,Row } from '@smui/data-table';
   import { accessToken, userInfo } from "@dopry/svelte-oidc";
-  // import IconButton, { Icon } from '@smui/icon-button';
   import Button, { Label as BtnLabel } from "@smui/button";
   import Dialog, { Actions, Content, Title } from "@smui/dialog";
   import { Cell } from "@smui/layout-grid";
   import Select, { Option } from "@smui/select";
   import Textfield from "@smui/textfield";
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import DragDropList from "svelte-dragdroplist";
   import CharacterSheetSmall from "../components/characterSheetSmall.svelte";
   import type { Character, CharacterInput } from "../services/characterService";
   import * as CharacterService from "../services/characterService";
 
-  // let sort: keyof Character = 'name';
-  // let sortDirection = 'ascending';
   let attributes = [
     "strength",
     "dexterity",
@@ -32,7 +28,8 @@
     attributeOrder: attributes,
   };
   let open = false;
-  let token;
+  let token: string;
+  const dispatch = createEventDispatcher();
 
   onMount(async () => {
     CharacterService.loadProfessionTypes().then((data) => (professions = data));
@@ -42,12 +39,16 @@
     token = $accessToken;
     CharacterService.loadCharacters(token).then((data) => (characters = data));
   }
+
+  const joinFight = ({detail}) => {
+    dispatch('joinFight', detail);
+  }
 </script>
 
 <h2>Charaktere</h2>
 
-{#each characters as character, i}
-  <CharacterSheetSmall bind:character />
+{#each characters as char, i}
+  <CharacterSheetSmall character="{char}" on:joinFight="{joinFight}"/>
 {/each}
 
 <Button on:click={() => (open = true)} variant="raised">
@@ -60,7 +61,6 @@
   aria-labelledby="mandatory-title"
   aria-describedby="mandatory-content"
 >
-  <!-- <LayoutGrid> -->
   <Title id="mandatory-title">Create character</Title>
   <Content id="mandatory-content">
     <Cell span={12}>

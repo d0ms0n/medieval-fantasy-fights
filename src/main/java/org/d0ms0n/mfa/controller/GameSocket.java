@@ -55,12 +55,11 @@ public class GameSocket {
 
             if (command.equals("join")) {
                 ObjectId characterIdObj = new ObjectId(charId);
-                Character character = characterRepository.findById(characterIdObj);
+                Character character = characterRepository.findByIdAndUserId(characterIdObj, userId);
                 if (character != null) {
                     lobbyRepository.persist(new Guest(characterIdObj, userId, character.getLevel()));
                     broadcast(">> " + userId + ":" + characterIdObj + " waits for a fight");
                 }
-                lobbyRepository.persist(new Guest(characterIdObj, userId, 1));
             }
         }
     }

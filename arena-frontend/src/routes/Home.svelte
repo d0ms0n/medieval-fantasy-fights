@@ -2,6 +2,7 @@
     import Button, { Label as BtnLabel } from '@smui/button';
     import { onMount } from 'svelte';
     import {userInfo, accessToken} from '@dopry/svelte-oidc';
+import Characters from './Characters.svelte';
 
 	let socket
     let messages : string[] = ["hello"]
@@ -27,11 +28,16 @@
     }
 
     function joinWithCharacter(charId: string){
-        socket.send("join:"+ charId);
+        
     }
 
     function close(){
         socket.close();
+    }
+
+    const joinFight = ({detail}) => {
+        socket.send("join:"+ detail);
+        console.debug("join fight with char "+detail);
     }
 
 </script>
@@ -40,6 +46,9 @@
 <p>
     {$userInfo.name}
 </p>
+
+<Characters on:joinFight="{joinFight}"/>
+
 
 <Button on:click={() => joinWithCharacter("620ac511c233c3a1b6b6878a")}>
     <BtnLabel>Join Game</BtnLabel>

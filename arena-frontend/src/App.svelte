@@ -90,12 +90,12 @@ onMount(() => {
                <LoginButton>Login</LoginButton>
                <LogoutButton>Logout</LogoutButton>
                <RefreshTokenButton>RefreshToken</RefreshTokenButton><br />
-               <pre>isLoading: {$isLoading}</pre>
-               <pre>isAuthenticated: {$isAuthenticated}</pre>
-               <pre>authToken: {$accessToken}</pre>
-               <pre>idToken: {$idToken}</pre>
-               <pre>userInfo: {JSON.stringify($userInfo, null, 2)}</pre>
-               <pre>authError: {$authError}</pre>
+               <p>isLoading: {$isLoading}</p>
+               <p>isAuthenticated: {$isAuthenticated}</p>
+               <p>authToken: {$accessToken}</p>
+               <p>idToken: {$idToken}</p>
+               <p>userInfo: {JSON.stringify($userInfo, null, 2)}</p>
+               <p>authError: {$authError}</p>
            </OidcContext>
         </Content>
       </Panel>
@@ -107,6 +107,12 @@ onMount(() => {
 <Router {routes} />
 
 <style>
+
+    .accordion-container p {
+        font-size: smaller;
+        margin: 0%;
+    }
+
     nav {
       background-color: rgba(0, 0, 0, 0.8);
       font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;

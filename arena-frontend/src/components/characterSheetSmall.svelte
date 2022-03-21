@@ -1,13 +1,15 @@
 <script lang="ts">
     import Button,{ Label } from '@smui/button';
-    import Card,{
-    ActionButtons,
-    ActionIcons,Actions,Content
-    } from '@smui/card';
+    import Card,{ActionButtons,ActionIcons,Actions,Content} from '@smui/card';
     import IconButton,{ Icon } from '@smui/icon-button';
     import LayoutGrid,{ Cell } from '@smui/layout-grid';
-    export let character;
-    let clicked = 0
+    import { createEventDispatcher } from 'svelte';
+    import type { Character } from '../types/Character';
+
+    export let character : Character;
+    const dispatch = createEventDispatcher();
+    let clicked = 0;
+    const submit = () => dispatch('joinFight', character.id);
 </script>
 
 <div class="card-container">
@@ -43,11 +45,8 @@
       </Content>
       <Actions>
         <ActionButtons>
-          <Button on:click={() => clicked++}>
-            <Label>Action</Label>
-          </Button>
-          <Button on:click={() => clicked++}>
-            <Label>Another</Label>
+          <Button on:click={submit}>
+            <Label>Fight</Label>
           </Button>
         </ActionButtons>
         <ActionIcons>
